@@ -1,0 +1,5 @@
+{
+  "name": "Employee Attendance Tracker",
+  "description": "A comprehensive tool to manage and track employee attendance and payments. The application features daily tracking, monthly summaries, and data persistence using local storage, all wrapped in a clean, modern interface with a dark mode option.",
+  "requestFramePermissions": []
+}
