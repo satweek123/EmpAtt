@@ -2,10 +2,12 @@
   "name": "Employee Attendance Tracker",
   "short_name": "EmpAtt",
   "description": "Manage daily attendance and monthly payroll offline.",
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1e3a8a",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "icons/icon-192.svg",

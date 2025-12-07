@@ -29,3 +29,30 @@ cd android
 Notes:
 - The workflow builds a debug APK (unsigned) for testing/installing on devices. For Play Store distribution you must create a release build, sign it, and follow Play Store requirements.
 - If you need an automatic signed release build in CI, provide your keystore and keys as GitHub Secrets and update the `android/gradle.properties` and `build.gradle` signing config accordingly.
+
+Signed release in CI
+
+You can configure GitHub Actions to produce a signed release APK automatically. I added a workflow at `.github/workflows/android-release-sign.yml` which will:
+
+- Build the web assets, assemble the Android release (unsigned)
+- Decode a base64-encoded keystore stored in the secret `ANDROID_KEYSTORE_BASE64`
+- Use `KEYSTORE_PASSWORD`, `KEY_ALIAS`, and `KEY_PASSWORD` secrets to sign the APK with `apksigner`
+- Upload the signed APK as a release asset
+
+Add these secrets to your repository (Settings → Secrets and variables → Actions):
+
+- `ANDROID_KEYSTORE_BASE64`: base64 encoding of your keystore file. Create with:
+
+```bash
+base64 -w 0 my-keystore.jks > keystore.base64
+```
+
+- `KEYSTORE_PASSWORD`: password for the keystore
+- `KEY_ALIAS`: alias name of the key inside the keystore
+- `KEY_PASSWORD`: password for the key (may be same as keystore password)
+
+Triggering the workflow:
+
+- Push a git tag matching `release-*` (e.g. `git tag release-1 && git push origin release-1`) or run the workflow manually from Actions → Android Signed Release → Run workflow.
+
+If you do not provide `ANDROID_KEYSTORE_BASE64`, the workflow will still assemble the unsigned release APK and upload it as an artifact for manual signing.

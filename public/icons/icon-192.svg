@@ -1,6 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
-  <rect width="192" height="192" rx="32" fill="#1e3a8a" />
-  <g fill="#fff" font-family="sans-serif" font-weight="700">
-    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="48">EA</text>
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="32" fill="url(#g)" />
+  <g fill="#fff" font-family="Inter, sans-serif" font-weight="700">
+    <text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" font-size="56">EA</text>
   </g>
 </svg>
