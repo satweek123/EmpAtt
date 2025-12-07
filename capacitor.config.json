@@ -1,0 +1,6 @@
+{
+  "appId": "com.empatt.app",
+  "appName": "Employee Attendance Tracker",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
