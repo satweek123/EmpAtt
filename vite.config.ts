@@ -16,6 +16,14 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
+      },
+      build: {
+        // Ensure React is bundled, not loaded from CDN
+        rollupOptions: {
+          output: {
+            manualChunks: undefined,
+          }
+        }
       }
     };
 });
