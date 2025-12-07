@@ -31,7 +31,7 @@ const useTabs = () => {
 
 export const TabsList: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => {
   return (
-    <div className={`inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground dark:bg-gray-800 mb-6 w-full grid grid-cols-2 ${className}`}>
+    <div className={`inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground mb-6 w-full grid grid-cols-2 ${className}`}>
       {children}
     </div>
   );
@@ -48,7 +48,7 @@ export const TabsTrigger: React.FC<{ value: string; children: React.ReactNode; c
   return (
     <button
       onClick={() => setActiveTab(value)}
-      className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${isActive ? 'bg-background text-foreground shadow-sm dark:bg-gray-900/50 dark:text-white' : ''} ${className}`}
+      className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${isActive ? 'bg-background text-foreground shadow-sm' : ''} ${className}`}
     >
       {children}
     </button>
