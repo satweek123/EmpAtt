@@ -148,7 +148,7 @@ To enable GitHub Actions to automatically sign future releases:
 1. **Keystore Security**: Production keystore must be kept private and never committed to git
 2. **GitHub Secrets**: Only add keystore credentials to GitHub Secrets (never hardcode)
 3. **APK Verification**: Always download APKs from official GitHub releases
-4. **API Keys**: Never embed API keys in the APK (use server-side proxies instead)
+4. **API Keys**: Never embed API keys in the APK.
 
 ---
 
