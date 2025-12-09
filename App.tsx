@@ -20,7 +20,7 @@ import {
   Loader2,
   AlertCircle,
   Moon,
-  Sun,
+  Sun
 } from "lucide-react";
 import {
   Employee,
@@ -81,6 +81,7 @@ const EmployeeAttendanceTracker: React.FC = () => {
   const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
+  const [formError, setFormError] = useState<string | null>(null);
 
   const today = useMemo(() => getLocalDateString(new Date()), []);
   const isInitialMount = useRef(true);
@@ -156,9 +157,10 @@ const EmployeeAttendanceTracker: React.FC = () => {
 
   const addEmployee = () => {
     if (!newEmployee.name.trim()) {
-      alert("Employee name cannot be empty.");
+      setFormError("Employee name cannot be empty.");
       return;
     }
+    setFormError(null);
     const employee: Employee = { id: Date.now().toString(), ...newEmployee };
     setEmployees([...employees, employee]);
     setNewEmployee({ name: '', phone: '' });
@@ -168,11 +170,16 @@ const EmployeeAttendanceTracker: React.FC = () => {
   const startEditEmployee = (employee: Employee) => {
     setEditingEmployeeId(employee.id);
     setEditEmployeeData(employee);
+    setFormError(null);
     setShowEmployeeForm(true);
   };
 
   const saveEditEmployee = () => {
-    if (!editEmployeeData.name.trim()) return;
+    if (!editEmployeeData.name.trim()) {
+      setFormError("Employee name cannot be empty.");
+      return;
+    }
+    setFormError(null);
     setEmployees(employees.map(emp => emp.id === editingEmployeeId ? editEmployeeData : emp));
     setEditingEmployeeId(null);
     setShowEmployeeForm(false);
@@ -286,24 +293,39 @@ const EmployeeAttendanceTracker: React.FC = () => {
     [employees]
   );
   
+  const handleToggleForm = () => {
+    setShowEmployeeForm(prev => !prev);
+    setEditingEmployeeId(null);
+    setNewEmployee({ name: '', phone: '' });
+    setFormError(null);
+  }
+
   return (
     <>
       <div className="min-h-screen bg-background text-foreground dark:bg-dark-background dark:text-dark-foreground transition-colors duration-300">
         <div className="container mx-auto px-4 py-6 sm:py-8 max-w-6xl">
-          <header className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 border-b pb-4 border-border dark:border-dark-border">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-blue-600 text-center sm:text-left">Employee Attendance Tracker</h1>
-              <p className="text-sm text-muted-foreground dark:text-dark-muted-foreground text-center sm:text-left">Manage daily attendance and monthly payroll with ease.</p>
+          <header className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 border-b pb-4 border-border dark:border-dark-border">
+            <div className="w-full md:w-auto">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-blue-600 text-center md:text-left">Employee Attendance Tracker</h1>
+              <p className="text-sm text-muted-foreground dark:text-dark-muted-foreground text-center md:text-left">Manage daily attendance and monthly payroll with ease.</p>
             </div>
-            <div className="flex w-full justify-end items-center gap-2 sm:w-auto">
-              <SaveStatusIndicator status={saveStatus} />
-              <Button variant="outline" size="icon" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} aria-label="Toggle theme">
-                  {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-              </Button>
-              <Button onClick={() => { setShowEmployeeForm(!showEmployeeForm); setEditingEmployeeId(null); }} className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white dark:bg-green-700 dark:hover:bg-green-800">
-                <Plus className="h-4 w-4" />
-                {showEmployeeForm ? 'Hide Form' : 'Add Employee'}
-              </Button>
+            
+            <div className="flex flex-col sm:flex-row w-full md:w-auto items-center gap-2">
+              <div className="flex w-full sm:w-auto justify-center sm:justify-end items-center gap-2 mb-2 sm:mb-0">
+                 <SaveStatusIndicator status={saveStatus} />
+              </div>
+              
+              <div className="flex items-center gap-2 w-full justify-center sm:justify-end">
+                <Button variant="outline" size="icon" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} aria-label="Toggle theme">
+                    {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+                </Button>
+                
+                <Button onClick={handleToggleForm} className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white dark:bg-green-700 dark:hover:bg-green-800 ml-2">
+                  <Plus className="h-4 w-4" />
+                  <span className="hidden sm:inline">{showEmployeeForm && !editingEmployeeId ? 'Hide Form' : 'Add Employee'}</span>
+                  <span className="sm:hidden">{showEmployeeForm && !editingEmployeeId ? 'Hide' : 'Add'}</span>
+                </Button>
+              </div>
             </div>
           </header>
 
@@ -312,10 +334,14 @@ const EmployeeAttendanceTracker: React.FC = () => {
               <CardHeader><CardTitle>{editingEmployeeId ? 'Edit Employee Details' : 'Add New Employee'}</CardTitle></CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 items-end">
-                  <div className="md:col-span-1"><Label htmlFor="name">Name*</Label><Input id="name" value={editingEmployeeId ? editEmployeeData.name : newEmployee.name} onChange={(e) => editingEmployeeId ? setEditEmployeeData({ ...editEmployeeData, name: e.target.value }) : setNewEmployee({ ...newEmployee, name: e.target.value })} placeholder="e.g. John Doe" /></div>
+                  <div className="md:col-span-1">
+                    <Label htmlFor="name">Name*</Label>
+                    <Input id="name" value={editingEmployeeId ? editEmployeeData.name : newEmployee.name} onChange={(e) => editingEmployeeId ? setEditEmployeeData({ ...editEmployeeData, name: e.target.value }) : setNewEmployee({ ...newEmployee, name: e.target.value })} placeholder="e.g. John Doe" />
+                     {formError && <p className="text-red-500 text-sm mt-1">{formError}</p>}
+                  </div>
                   <div className="md:col-span-1"><Label htmlFor="phone">Phone</Label><Input id="phone" value={editingEmployeeId ? editEmployeeData.phone : newEmployee.phone} onChange={(e) => editingEmployeeId ? setEditEmployeeData({ ...editEmployeeData, phone: e.target.value }) : setNewEmployee({ ...newEmployee, phone: e.target.value })} placeholder="e.g. 555-1234" type="tel" /></div>
                   <div className="md:col-span-1 lg:col-span-2 flex flex-col sm:flex-row items-end gap-2 w-full">
-                    {editingEmployeeId ? (<><Button onClick={saveEditEmployee} className="w-full sm:w-auto flex-1 bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-700 dark:hover:bg-blue-800"><Check className="h-4 w-4 mr-2" />Save Changes</Button><Button variant="outline" onClick={() => { setEditingEmployeeId(null); setShowEmployeeForm(false); }} className="w-full sm:w-auto flex-1"><X className="h-4 w-4 mr-2" />Cancel</Button></>) : (<Button onClick={addEmployee} className="w-full bg-green-600 hover:bg-green-700 text-white dark:bg-green-700 dark:hover:bg-green-800"><Plus className="h-4 w-4 mr-2" />Add Employee</Button>)}
+                    {editingEmployeeId ? (<><Button onClick={saveEditEmployee} className="w-full sm:w-auto flex-1 bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-700 dark:hover:bg-blue-800"><Check className="h-4 w-4 mr-2" />Save Changes</Button><Button variant="outline" onClick={() => { setEditingEmployeeId(null); setShowEmployeeForm(false); setFormError(null); }} className="w-full sm:w-auto flex-1"><X className="h-4 w-4 mr-2" />Cancel</Button></>) : (<Button onClick={addEmployee} className="w-full bg-green-600 hover:bg-green-700 text-white dark:bg-green-700 dark:hover:bg-green-800"><Plus className="h-4 w-4 mr-2" />Add Employee</Button>)}
                   </div>
                 </div>
               </CardContent>
@@ -358,7 +384,7 @@ const EmployeeAttendanceTracker: React.FC = () => {
                   {sortedEmployees.length === 0 ? (
                     <div className="text-center py-8 border-2 border-dashed rounded-lg p-6 bg-gray-50 dark:bg-gray-900/50 border-gray-300 dark:border-gray-700">
                       <p className="text-muted-foreground dark:text-dark-muted-foreground mb-4">No employees found. Add one to start tracking!</p>
-                      <Button onClick={() => setShowEmployeeForm(true)} className="bg-orange-500 hover:bg-orange-600 text-white"><Plus className="h-4 w-4 mr-2" />Add First Employee</Button>
+                      <Button onClick={handleToggleForm} className="bg-orange-500 hover:bg-orange-600 text-white"><Plus className="h-4 w-4 mr-2" />Add First Employee</Button>
                     </div>
                   ) : (
                     <div className="space-y-4">
@@ -387,8 +413,8 @@ const EmployeeAttendanceTracker: React.FC = () => {
                                   <Input id={`payment-${employee.id}`} type="number" value={record?.payment || ''} onChange={(e) => updatePayment(employee.id, parseFloat(e.target.value) || 0)} className="w-full sm:w-24 text-right" placeholder="0.00" min="0" />
                                 </div>
                                 <div className="flex gap-1 mt-2 sm:mt-0 ml-auto">
-                                  <Button variant="outline" size="icon" onClick={() => startEditEmployee(employee)}><Edit className="h-4 w-4 text-yellow-600 dark:text-yellow-400" /></Button>
-                                  <Button variant="outline" size="icon" onClick={() => setEmployeeToDelete(employee)}><Trash className="h-4 w-4 text-red-600 dark:text-red-400" /></Button>
+                                  <Button variant="outline" size="icon" onClick={() => startEditEmployee(employee)} aria-label={`Edit ${employee.name}`}><Edit className="h-4 w-4 text-yellow-600 dark:text-yellow-400" /></Button>
+                                  <Button variant="outline" size="icon" onClick={() => setEmployeeToDelete(employee)} aria-label={`Delete ${employee.name}`}><Trash className="h-4 w-4 text-red-600 dark:text-red-400" /></Button>
                                 </div>
                               </div>
                             </div>

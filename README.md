@@ -1,8 +1,12 @@
-
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+</div>
 
 # Run and deploy your AI Studio app
 
 This contains everything you need to run your app locally.
+
+View your app in AI Studio: https://ai.studio/apps/drive/19r8FxHZi-UG92yFirr_VRvCr3LhLMQ6Y
 
 ## Run Locally
 
@@ -14,14 +18,3 @@ This contains everything you need to run your app locally.
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
-
-## PWA / Android (installable offline)
-
-This project is configured as a Progressive Web App (PWA). You can install it on Android devices and the app will work offline using a service worker.
-
-To build and install locally:
-
-```bash
-npm install
-npm run build
-
